@@ -4,6 +4,7 @@ import Tesseract from "tesseract.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button } from "react-bootstrap";
 import FloatingIcon from "./FloatingIcon";
+import { FaCopy } from "react-icons/fa";
 
 function App() {
   const [image, setImage] = useState<string | null>(null);
@@ -11,7 +12,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [showImageAndText, setShowImageAndText] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showCopiedNotification, setShowCopiedNotification] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputResetRef = useRef<HTMLInputElement>(null); // New ref for resetting the file input
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,9 +59,28 @@ function App() {
     setShowImageAndText(false); // Hide the image and text areas
     setImage(null); // Reset the image state
     setText(""); // Reset the text state
+    if (fileInputResetRef.current) {
+      fileInputResetRef.current.value = ""; // Reset the file input value
+    }
   };
 
   const handleCloseErrorModal = () => setShowErrorModal(false); // Function to close the modal
+
+  const copyToClipboard = () => {
+    const textWithoutHtmlTags = text.replace(/<[^>]+>/g, ""); // Remove HTML tags
+    navigator.clipboard
+      .writeText(textWithoutHtmlTags)
+      .then(() => {
+        // Show a nice animation or notification when the text is copied
+        setShowCopiedNotification(true);
+        setTimeout(() => {
+          setShowCopiedNotification(false);
+        }, 2000); // Hide the notification after 2 seconds
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
 
   return (
     <div className="container mt-5">
@@ -79,6 +101,13 @@ function App() {
         ref={fileInputRef}
         style={{ display: "none" }} // Hide the default input
       />
+      {/* Add a new hidden input for resetting the file input value */}
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputResetRef}
+        style={{ display: "none" }}
+      />
 
       <div className="d-flex justify-content-center">
         <button
@@ -94,15 +123,13 @@ function App() {
 
       {showImageAndText && image && (
         <div className="row">
-          {" "}
-          {/* Use Bootstrap's grid system */}
           <div className="col-md-6">
             <img src={image} alt="Selected" className="img-fluid mb-3" />
           </div>
-          <div className="col-md-6">
-            <div className="border p-3 chatgpt-response ">
-              {" "}
+          <div className="col-md-6 position-relative">
+            <div className="border p-3 chatgpt-response">
               <h4 className="text-center mb-2">Extracted Text:</h4>
+
               <div className="d-flex justify-content-center">
                 {isLoading ? (
                   <Hourglass
@@ -121,6 +148,14 @@ function App() {
                   />
                 )}
               </div>
+              {text && (
+                <FaCopy
+                  className="position-absolute top-0 end-0 m-4"
+                  style={{ cursor: "pointer" }}
+                  onClick={copyToClipboard}
+                  title="copy text"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -134,8 +169,6 @@ function App() {
           <Modal.Title>Error</Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-danger">
-          {" "}
-          {/* Add text-danger class */}
           Please upload an image file.
         </Modal.Body>
         <Modal.Footer>
@@ -145,6 +178,11 @@ function App() {
         </Modal.Footer>
       </Modal>
       <FloatingIcon />
+      {showCopiedNotification && (
+        <div className="copied-notification">
+          <span>Text copied to clipboard!</span>
+        </div>
+      )}
     </div>
   );
 }
