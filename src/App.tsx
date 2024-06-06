@@ -29,7 +29,6 @@ function App() {
         try {
           const { data } = await Tesseract.recognize(file, "eng", {
             logger: (m) => console.log(m),
-            pageSegmentationMode: Tesseract.PSM.AUTO_OSD, // Auto-detect page orientation and script
           });
           const blocks = data.blocks || [];
           const formattedText = blocks
