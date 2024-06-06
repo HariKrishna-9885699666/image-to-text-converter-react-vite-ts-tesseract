@@ -1,0 +1,17 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.extracted-text {
+  white-space: pre-wrap; /* Preserve spaces and line breaks */
+}
+
+.paragraph { /* Style based on block.paragraph from OCR */
+  margin-bottom: 1rem;
+}
+
+.chatgpt-response {
+  background-color: #f8f8f8; /* Light background */
+  border-radius: 8px;        /* Rounded corners */
+  padding: 1rem;            /* Padding for content */
+  font-family: monospace;    /* Use a monospace font (optional) */
+}
+
