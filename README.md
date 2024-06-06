@@ -4,7 +4,7 @@ This is a simple Image to text convertor application using React + Vite, TypeScr
 
 ## Live Demo
 
-You can check out the live demo of the application here: [Image to text convertor Demo](https://web-scraper-ui-react-vite-ts-bootstra.netlify.app/)
+You can check out the live demo of the application here: [Image to text convertor Demo](https://image-to-text-converter-react-vite-ts.netlify.app/)
 
 ## Prerequisites
 
